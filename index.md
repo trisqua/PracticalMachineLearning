@@ -39,20 +39,19 @@ The resulting training, testing and validation dataset only contain measured val
 As the goal is to predict in which manner the participants did their exercise, the model will have to predict _classe_. Desired accuracy of the model is 99% or higher. 
 
 The first fitted model is a tree. The accuracy was only 49%, so a different model is required.
-The second fitted model uses boosting. Its accuracy is 96.7%, which is a lot better, but still no 99%.
-The third fitted model is based on random forests. Its accuracy is 99.4% and should therefore be well equipped to predict the classe type of the validation set correctly.
-
 
 ```
 ##  Accuracy 
 ## 0.4920701
 ```
 
-![](index_files/figure-html/models-1.png)<!-- -->
+![](index_files/figure-html/Model 1-1.png)<!-- -->
+
+The second fitted model uses boosting. Its accuracy is about 96%, which is a lot better, but still not the required 99%.
 
 ```
 ##    user  system elapsed 
-##   26.21    0.20  145.19
+##   26.61    0.14  140.61
 ```
 
 ```
@@ -60,9 +59,11 @@ The third fitted model is based on random forests. Its accuracy is 99.4% and sho
 ##  0.96202
 ```
 
+The third fitted model is based on random forests. Its accuracy is 99.5% and should therefore be well equipped to predict the classe type of the validation set correctly.
+
 ```
 ##    user  system elapsed 
-##   49.02    0.30  416.53
+##   50.07    0.23  377.44
 ```
 
 ```
@@ -101,7 +102,7 @@ The third fitted model is based on random forests. Its accuracy is 99.4% and sho
 ```
 
 ### Results
-The 3rd model, based on random forests, will be used to predict the classe type for the Validation set.
+The 3rd model, based on random forests, will be used to predict the classe type for the Validation set. The resulting prediction is:
 
 ```
 ##  [1] B A B A A E D B A A B C B A E E A B B B
