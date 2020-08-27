@@ -45,13 +45,13 @@ The first fitted model is a tree. The accuracy was only 49%, so a different mode
 ## 0.4920701
 ```
 
-![](index_files/figure-html/Model 1-1.png)<!-- -->
+![](index_files/figure-html/Model1-1.png)<!-- -->
 
 The second fitted model uses boosting. Its accuracy is about 96%, which is a lot better, but still not the required 99%.
 
 ```
 ##    user  system elapsed 
-##   26.61    0.14  140.61
+##   26.79    0.16  157.76
 ```
 
 ```
@@ -63,7 +63,7 @@ The third fitted model is based on random forests. Its accuracy is 99.5% and sho
 
 ```
 ##    user  system elapsed 
-##   50.07    0.23  377.44
+##   51.24    0.32  375.47
 ```
 
 ```
@@ -781,3 +781,10 @@ Accuracy_mod3<-confusionMatrix(predict3,testing.nona$classe)$overall[1]
 print(Accuracy_mod3)
 ```
 
+#### A05 Predicting the classe type for the Validation dataset
+
+```r
+predictClasse<-predict(mod3,validation.nona)
+Validation_with_prediction<-cbind(validation.nona,predictClasse)
+predictClasse
+```

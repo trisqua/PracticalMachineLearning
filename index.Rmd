@@ -17,16 +17,17 @@ The dataset consists of a training dataset and a testing dataset. The latter doe
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
+fig.path = "index_files/"
 ```
 
-```{r Load packages, include=FALSE, echo=FALSE, results="hide"}
+```{r Load_Packages, include=FALSE, echo=FALSE, results="hide"}
 list.of.packages <- c("caret","rattle","randomForest","klaR","doParallel","parallel")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 invisible(lapply(list.of.packages,require,character.only=TRUE))
 ```
 
-```{r Load data,  include=FALSE, echo=FALSE}
+```{r Load_Data, include=FALSE, echo=FALSE}
 train_url="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
 test_url="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
 train<-read.csv(train_url)
@@ -34,7 +35,7 @@ validation<-read.csv(test_url)
 set.seed(1234)
 ```
 
-```{r Creating partitions, echo=FALSE}
+```{r Creating_Partitions, echo=FALSE}
 inTrain<-createDataPartition(y=train$classe,p=0.75,list=FALSE)
 training<-train[inTrain,]
 testing<-train[-inTrain,]
@@ -48,7 +49,7 @@ Further analysis shows that quite a number of columns don't seem to contain data
 The first 7 columns of  the dataset seem to contain information about the measurement, rather than measured values, i.e. name of the participant, moment of exercise, etc. As these won't be relevant to the prediction, these columns have been removed from the datasets as well.
 The resulting training, testing and validation dataset only contain measured values on the exercise and the _classe_ variable. 
 
-```{r Exploratory analysis, echo=FALSE}
+```{r Exploratory_Analysis, echo=FALSE}
 #head(training)
 #colnames(validation)
 #summary(training)
@@ -56,7 +57,7 @@ training$classe<-as.factor(training$classe)
 testing$classe<-as.factor(testing$classe)
 ```
 
-```{r Data preparation, echo=FALSE}
+```{r Data_Preparation, echo=FALSE}
 training.nona.temp<-training[training$new_window!="yes",]
 training.nona<-training.nona.temp[,!grepl("kurtosis|skewness|max|min|amplitude|var|avg|stddev|window|X|user|timestamp",colnames(training.nona.temp))]
 rm(training.nona.temp)
@@ -74,16 +75,17 @@ rm(validation.nona.temp)
 As the goal is to predict in which manner the participants did their exercise, the model will have to predict _classe_. Desired accuracy of the model is 99% or higher. 
 
 The first fitted model is a tree. The accuracy was only 49%, so a different model is required.
-```{r Model 1, echo=FALSE}
+```{r Model1, echo=FALSE}
 mod1<-train(classe~.,method="rpart",data=training.nona)
 predict1<-predict(mod1,testing.nona)
 Accuracy_mod1<-confusionMatrix(predict1,testing.nona$classe)$overall[1]
 print(Accuracy_mod1)
-fancyRpartPlot(mod1$finalModel)
+tree1<-fancyRpartPlot(mod1$finalModel)
+
 ```
 
 The second fitted model uses boosting. Its accuracy is about 96%, which is a lot better, but still not the required 99%.
-```{r Model 2, echo=FALSE}
+```{r Model2, echo=FALSE}
 cluster2<-makeCluster(detectCores()-1)
 registerDoParallel(cluster2)
 fitControl2<-trainControl(method="cv",number=5,allowParallel=TRUE)
@@ -96,7 +98,7 @@ print(Accuracy_mod2)
 ```
 
 The third fitted model is based on random forests. Its accuracy is 99.5% and should therefore be well equipped to predict the classe type of the validation set correctly.
-```{r Model 3, echo=FALSE}
+```{r Model3, echo=FALSE}
 cluster3<-makeCluster(detectCores()-1)
 registerDoParallel(cluster3)
 fitControl3<-trainControl(method="cv",number=5,allowParallel=TRUE)
