@@ -72,7 +72,7 @@ rm(validation.nona.temp)
 ```
 
 ### Fitting models
-As the goal is to predict in which manner the participants did their exercise, the model will have to predict _classe_. Desired accuracy of the model is 99% or higher. 
+As the goal is to predict in which manner the participants did their exercise, the model will have to predict _classe_. Desired accuracy of the model is 99% or higher. Code for all 3 models has been included in appendix A04.
 
 The first fitted model is a tree. The accuracy was only 49%, so a different model is required.
 ```{r Model1, echo=FALSE}
@@ -112,7 +112,7 @@ confusionMatrix(predict3,testing.nona$classe)
 ```
 
 ### Results
-The 3rd model, based on random forests, will be used to predict the classe type for the Validation set. The resulting prediction is:
+The 3rd model, based on random forests, will be used to predict the classe type for the Validation set. Code for the prediction is included in appendix A05. The resulting prediction is:
 ```{r Results}
 predictClasse<-predict(mod3,validation.nona)
 Validation_with_prediction<-cbind(validation.nona,predictClasse)
