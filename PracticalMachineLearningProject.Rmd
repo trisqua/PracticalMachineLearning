@@ -8,12 +8,8 @@ output:
 ---
 ### Synopsis
 In this article, a dataset regarding personal activity is investigated. 6 participants have taken measurements while performing barbell lifts, with accelerometers on the belt, forearm, arm, and dumbell. The data of these 4 accelerometers has been recorded, as well as a statement whether the exercise was performed correctly or incorrectly and in the latter case, in what way. This exercise classe has been recorded in the 'classe' variable. The goal of this article is to analyse the dataset and set up a model that will correctly predict the exercise classe for a second dataset that doesn't contain the classe variable.
-For predicting the classe types, 3 prediction methods have been tested: prediction with a tree, prediction with boosting and prediction based on random forests. The resulting predictions should have an accuracy of at least 95%.
-<<<<<<< HEAD
-Both the second and the third prediction method, based on boosting and random forest, respectively, have an accuracy of over 95%. Both models have been used to predict the classe type for the validation dataset. The predicted classe types have been compared to the real values, by submitting them in the course prediction quiz. Both the second and the third model have a score of 20/20 correct predictions. 
-=======
-Both the second and the third prediction method, based on boosting and random forest, respectively, have an accuracy of over 95%. Both models have been used to predict the classe type for the validation dataset. The predicted classe types have been compared to the real values, by submitting them in the course prediction quiz. The third model had a score of 14/20 correct predictions and the second model a score of 20/20 correct predictions. We can conclude that the third model is overfitting the data and that the second model, based on boosting, is accurate enough to predict all validation classe types correct.
->>>>>>> c3a021f3daa5c195c85d7b9ba8b13a00af870e3e
+For predicting the classe types, 3 prediction methods have been tested: prediction with a tree, prediction with boosting and prediction based on random forests.
+The 3rd prediction method, based on random forest, was the only one with accuracy over 99%. This method has been chosen to predict the classe type for the validation dataset.
 
 ### Processing the data
 #### Loading the dataset
@@ -21,11 +17,7 @@ The dataset consists of a training dataset and a testing dataset. The latter doe
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
-<<<<<<< HEAD
-fig.path = "AssignmentProject_files/"
-=======
 fig.path = "index_files/"
->>>>>>> c3a021f3daa5c195c85d7b9ba8b13a00af870e3e
 ```
 
 ```{r Load_Packages, include=FALSE, echo=FALSE, results="hide"}
@@ -40,10 +32,7 @@ train_url="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
 test_url="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
 train<-read.csv(train_url)
 validation<-read.csv(test_url)
-<<<<<<< HEAD
-=======
-set.seed(9876)
->>>>>>> c3a021f3daa5c195c85d7b9ba8b13a00af870e3e
+set.seed(1234)
 ```
 
 ```{r Creating_Partitions, echo=FALSE}
@@ -83,26 +72,19 @@ rm(validation.nona.temp)
 ```
 
 ### Fitting models
-As the goal is to predict in which manner the participants did their exercise, the model will have to predict _classe_. Desired accuracy of the model is 95% or higher. Code for all 3 models has been included in appendix A04.
+As the goal is to predict in which manner the participants did their exercise, the model will have to predict _classe_. Desired accuracy of the model is 99% or higher. Code for all 3 models has been included in appendix A04.
 
-<<<<<<< HEAD
-The first fitted model is a tree. The accuracy is only 49%, so a different model is required.
-=======
 The first fitted model is a tree. The accuracy was only 49%, so a different model is required.
->>>>>>> c3a021f3daa5c195c85d7b9ba8b13a00af870e3e
 ```{r Model1, echo=FALSE}
 mod1<-train(classe~.,method="rpart",data=training.nona)
 predict1<-predict(mod1,testing.nona)
 Accuracy_mod1<-confusionMatrix(predict1,testing.nona$classe)$overall[1]
 print(Accuracy_mod1)
 tree1<-fancyRpartPlot(mod1$finalModel)
-<<<<<<< HEAD
-=======
 
->>>>>>> c3a021f3daa5c195c85d7b9ba8b13a00af870e3e
 ```
 
-The second fitted model uses boosting. Its accuracy is about 96%, which is a lot better. We will see if we can find a model with even higher accuracy.
+The second fitted model uses boosting. Its accuracy is about 96%, which is a lot better, but still not the required 99%.
 ```{r Model2, echo=FALSE}
 cluster2<-makeCluster(detectCores()-1)
 registerDoParallel(cluster2)
@@ -111,10 +93,11 @@ system.time(mod2<-train(classe~.,method="gbm",data=training.nona,verbose=FALSE,t
 stopCluster(cluster2)
 registerDoSEQ()
 predict2<-predict(mod2,testing.nona)
-confusionMatrix(predict2,testing.nona$classe)
+Accuracy_mod2<-confusionMatrix(predict2,testing.nona$classe)$overall[1]
+print(Accuracy_mod2)
 ```
 
-The third fitted model is based on random forests. Its accuracy is about 99.5% and should therefore do well in predicting the classe type of the validation set correctly. We have to be wary of such a high accuracy percentage, as it might indicate overfitting of the model.
+The third fitted model is based on random forests. Its accuracy is 99.5% and should therefore be well equipped to predict the classe type of the validation set correctly.
 ```{r Model3, echo=FALSE}
 cluster3<-makeCluster(detectCores()-1)
 registerDoParallel(cluster3)
@@ -123,42 +106,18 @@ system.time(mod3<-train(classe~.,method="rf",data=training.nona,trControl=fitCon
 stopCluster(cluster3)
 registerDoSEQ()
 predict3<-predict(mod3,testing.nona)
+#Accuracy_mod3<-confusionMatrix(predict3,testing.nona$classe)$overall[1]
+#print(Accuracy_mod3)
 confusionMatrix(predict3,testing.nona$classe)
 ```
 
-
-
 ### Results
-As the third model has a very high accuracy 
-<<<<<<< HEAD
-The second model, based on boosting, as well as the third model, based on random trees, will be used to predict the classe type for the validation dataset. We will show the resulting predictions as well as the number of correct predictions for each set. For comparative purposes, the prediction results for model 1 have also been included.
-Code for the predictions is included in appendix A05. The resulting predictions are:
+The 3rd model, based on random forests, will be used to predict the classe type for the Validation set. Code for the prediction is included in appendix A05. The resulting prediction is:
 ```{r Results}
-ValidationClasse<-c("B","A","B","A","A","E","D","B","A","A","B","C","B","A","E","E","A","B","B","B")
-predictClasse1<-predict(mod1,validation.nona)
-Model1Score<-sum(predictClasse1==ValidationClasse)
-predictClasse2<-predict(mod2,validation.nona)
-Model2Score<-sum(predictClasse2==ValidationClasse)
-predictClasse3<-predict(mod3,validation.nona)
-Model3Score<-sum(predictClasse3==ValidationClasse)
-print( paste("Score for model 1: ", Model1Score))
-print( paste("Score for model 2: ", Model2Score))
-print( paste("Score for model 3: ", Model3Score))
-=======
-The third model, based on random trees, as well as the second model, based on boosting, will be used to predict the classe type for the Validation dataset. We will show the resulting predictions as well as the number of correct predictions for each set.
-Both the 2nd and the  3rd model, based on random forests, will be used to predict the classe type for the Validation set. Code for the predictions is included in appendix A05. The resulting predictions are:
-```{r Results}
-predictClasse3<-predict(mod3,validation.nona)
-predictClasse2<-predict(mod2,validation.nona)
-ValidationClasse<-c("B","A","B","A","A","E","D","B","A","A","B","C","B","A","E","E","A","B","B","B")
-Model3Score<-sum(predictClasse3==ValidationClasse)
-Model2Score<-sum(predictClasse2==ValidationClasse)
-print(Model3Score)
-print(Model2Score)
->>>>>>> c3a021f3daa5c195c85d7b9ba8b13a00af870e3e
+predictClasse<-predict(mod3,validation.nona)
+Validation_with_prediction<-cbind(validation.nona,predictClasse)
+predictClasse
 ```
-
-
 
 ### Source of the data
 The data for this project is the _Weight Lifting Exercise Database_, gathered from http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har. 
@@ -178,10 +137,7 @@ train_url="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
 test_url="https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
 train<-read.csv(train_url)
 validation<-read.csv(test_url)
-<<<<<<< HEAD
-=======
 set.seed(1234)
->>>>>>> c3a021f3daa5c195c85d7b9ba8b13a00af870e3e
 ```
 
 ```{r Creating partitions A01, eval=FALSE, echo=TRUE}
@@ -245,24 +201,7 @@ print(Accuracy_mod3)
 
 #### A05 Predicting the classe type for the Validation dataset
 ```{r Results A05, eval=FALSE, echo=TRUE}
-<<<<<<< HEAD
-ValidationClasse<-c("B","A","B","A","A","E","D","B","A","A","B","C","B","A","E","E","A","B","B","B")
-predictClasse1<-predict(mod1,validation.nona)
-Model1Score<-sum(predictClasse1==ValidationClasse)
-predictClasse2<-predict(mod2,validation.nona)
-Model2Score<-sum(predictClasse2==ValidationClasse)
-predictClasse3<-predict(mod3,validation.nona)
-Model3Score<-sum(predictClasse3==ValidationClasse)
-print( paste("Score for model 1: ", Model1Score))
-print( paste("Score for model 2: ", Model2Score))
-print( paste("Score for model 3: ", Model3Score))
-=======
-predictClasse3<-predict(mod3,validation.nona)
-predictClasse2<-predict(mod2,validation.nona)
-ValidationClasse<-c("B","A","B","A","A","E","D","B","A","A","B","C","B","A","E","E","A","B","B","B")
-Model3Score<-sum(predictClasse3==ValidationClasse)
-Model2Score<-sum(predictClasse2==ValidationClasse)
-print(Model3Score)
-print(Model2Score)
->>>>>>> c3a021f3daa5c195c85d7b9ba8b13a00af870e3e
+predictClasse<-predict(mod3,validation.nona)
+Validation_with_prediction<-cbind(validation.nona,predictClasse)
+predictClasse
 ```
